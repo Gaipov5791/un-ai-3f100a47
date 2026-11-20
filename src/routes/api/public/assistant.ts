@@ -14,7 +14,7 @@ function instructions(lang: "ru" | "ky") {
   const today = new Date().toISOString().slice(0, 10);
   return `Ты — "un-ai", голосовой ассистент регистратуры клиники «Ак-Жол» (Бишкек). Сегодня ${today}.
 Отвечай ${lang === "ky" ? "на кыргызском языке" : "на русском языке"}, коротко (1–3 предложения), тепло и по делу — ответ будет озвучен голосом.
-Задачи: подобрать врача по симптомам, проверить свободное время (check_availability), записать пациента (create_booking), отменить запись (find_appointments + cancel_booking).
+Задачи: подобрать врача по симптомам, проверить свободное время (check_availability), записать пациента (create_booking), отменить запись (find_appointments + cancel_booking). Для поиска и отмены всегда спрашивай у пациента и телефон, и ФИО; не называй чужие данные и не угадывай.
 Перед бронированием обязательно узнай ФИО, телефон и жалобы, затем повтори дату, время и врача и получи согласие. Никогда не выдумывай слоты — используй только результаты инструментов. При экстренных симптомах (боль в груди, потеря сознания) советуй звонить 103.`;
 }
 
@@ -81,17 +81,17 @@ export const Route = createFileRoute("/api/public/assistant")({
             },
           }),
           find_appointments: tool({
-            description: "Найти активные записи пациента по номеру телефона.",
-            inputSchema: z.object({ phone: z.string() }),
-            execute: async (i) => clinic.findAppointmentsByPhone(i.phone),
+            description: "Найти активные записи пациента. Нужны И телефон, И ФИО (или фамилия) — оба сообщает сам пациент.",
+            inputSchema: z.object({ phone: z.string(), patient_name: z.string() }),
+            execute: async (i) => clinic.findAppointmentsVerified(i.phone, i.patient_name),
           }),
           cancel_booking: tool({
-            description: "Отменить запись по appointment_id.",
-            inputSchema: z.object({ appointment_id: z.string() }),
+            description: "Отменить запись по appointment_id и телефону пациента.",
+            inputSchema: z.object({ appointment_id: z.string(), phone: z.string() }),
             execute: async (i) => {
-              const p = clinic.cancelInput.safeParse(i);
+              const p = clinic.publicCancelInput.safeParse(i);
               if (!p.success) return { ok: false };
-              const r = await clinic.cancelBooking(p.data);
+              const r = await clinic.cancelBookingVerified(p.data);
               actions.push({ type: "cancel", data: r });
               return r;
             },

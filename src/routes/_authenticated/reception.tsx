@@ -2,17 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Radio, X } from "lucide-react";
+import { ArrowLeft, LogOut, Radio, X } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { listAppointments, cancelFromReception, bookFromReception } from "@/lib/reception.functions";
+import { listAppointments, cancelFromReception, bookFromReception, getStaffStatus } from "@/lib/reception.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/reception")({
+export const Route = createFileRoute("/_authenticated/reception")({
   head: () => ({
     meta: [
       { title: "Пульт Smart Reception — un-ai, клиника «Ак-Жол»" },
@@ -54,7 +55,15 @@ function Reception() {
     enabled: !!activeDoc,
     queryFn: async () => (await supabase.from("schedule_slots").select("*").eq("doctor_id", activeDoc!).eq("slot_date", day).order("slot_time")).data ?? [],
   });
-  const appts = useQuery({ queryKey: ["appointments"], queryFn: () => fetchAppts() });
+  const staffFn = useServerFn(getStaffStatus);
+  const staff = useQuery({ queryKey: ["staff"], queryFn: () => staffFn() });
+  const appts = useQuery({ queryKey: ["appointments"], queryFn: () => fetchAppts(), enabled: staff.data?.isStaff === true });
+  const navigate = useNavigate();
+  async function signOut() {
+    await qc.cancelQueries(); qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   useEffect(() => {
     const ch = supabase
@@ -77,6 +86,16 @@ function Reception() {
     qc.invalidateQueries();
   }
 
+  if (staff.isLoading) return <div className="p-10 text-center text-muted-foreground">Проверка доступа…</div>;
+  if (!staff.data?.isStaff)
+    return (
+      <div className="mx-auto max-w-md p-10 text-center">
+        <h1 className="font-display text-xl">Нет доступа</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Этот аккаунт не отмечен как сотрудник ресепшена. Обратитесь к администратору клиники.</p>
+        <Button className="mt-6" variant="outline" onClick={signOut}><LogOut /> Выйти</Button>
+      </div>
+    );
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-5 md:px-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -88,6 +107,7 @@ function Reception() {
           </div>
         </div>
         <Badge variant="outline" className={cn("gap-1.5", live && "border-primary text-primary")}><Radio className="h-3 w-3" />{live ? "Онлайн" : "Подключение…"}</Badge>
+        <Button variant="ghost" size="sm" onClick={signOut}><LogOut /> Выйти</Button>
       </header>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr_360px]">

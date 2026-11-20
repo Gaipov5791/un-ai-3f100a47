@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ReceptionRouteImport } from './routes/reception'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedReceptionRouteImport } from './routes/_authenticated/reception'
 import { Route as ApiPublicAssistantRouteImport } from './routes/api/public/assistant'
 import { Route as ApiPublicCancelBookingRouteImport } from './routes/api/public/cancel-booking'
 import { Route as ApiPublicCheckAvailabilityRouteImport } from './routes/api/public/check-availability'
@@ -21,10 +23,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReceptionRoute = ReceptionRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedReceptionRoute = AuthenticatedReceptionRouteImport.update({
   id: '/reception',
   path: '/reception',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiPublicAssistantRoute = ApiPublicAssistantRouteImport.update({
   id: '/api/public/assistant',
@@ -50,7 +61,8 @@ const ApiPublicCreateBookingRoute = ApiPublicCreateBookingRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/reception': typeof ReceptionRoute
+  '/auth': typeof AuthRoute
+  '/reception': typeof AuthenticatedReceptionRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
@@ -58,7 +70,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/reception': typeof ReceptionRoute
+  '/auth': typeof AuthRoute
+  '/reception': typeof AuthenticatedReceptionRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
@@ -67,7 +80,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/reception': typeof ReceptionRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/reception': typeof AuthenticatedReceptionRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
@@ -77,6 +92,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/reception'
     | '/api/public/assistant'
     | '/api/public/cancel-booking'
@@ -85,6 +101,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/reception'
     | '/api/public/assistant'
     | '/api/public/cancel-booking'
@@ -93,7 +110,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/reception'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/reception'
     | '/api/public/assistant'
     | '/api/public/cancel-booking'
     | '/api/public/check-availability'
@@ -102,7 +121,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ReceptionRoute: typeof ReceptionRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ApiPublicAssistantRoute: typeof ApiPublicAssistantRoute
   ApiPublicCancelBookingRoute: typeof ApiPublicCancelBookingRoute
   ApiPublicCheckAvailabilityRoute: typeof ApiPublicCheckAvailabilityRoute
@@ -118,12 +138,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reception': {
-      id: '/reception'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/reception': {
+      id: '/_authenticated/reception'
       path: '/reception'
       fullPath: '/reception'
-      preLoaderRoute: typeof ReceptionRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedReceptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/assistant': {
       id: '/api/public/assistant'
@@ -156,9 +190,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedReceptionRoute: typeof AuthenticatedReceptionRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedReceptionRoute: AuthenticatedReceptionRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ReceptionRoute: ReceptionRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ApiPublicAssistantRoute: ApiPublicAssistantRoute,
   ApiPublicCancelBookingRoute: ApiPublicCancelBookingRoute,
   ApiPublicCheckAvailabilityRoute: ApiPublicCheckAvailabilityRoute,

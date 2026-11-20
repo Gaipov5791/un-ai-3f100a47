@@ -60,6 +60,16 @@ export async function createBooking(input: z.infer<typeof bookingInput>) {
 }
 
 export const cancelInput = z.object({ appointment_id: z.string().uuid() });
+export const publicCancelInput = z.object({ appointment_id: z.string().uuid(), phone: z.string().trim().min(5).max(30) });
+
+const normPhone = (p: string) => p.replace(/\D/g, "");
+
+export async function cancelBookingVerified(input: z.infer<typeof publicCancelInput>) {
+  const s = await db();
+  const { data } = await s.from("appointments").select("phone").eq("id", input.appointment_id).eq("status", "confirmed").maybeSingle();
+  if (!data || normPhone(data.phone) !== normPhone(input.phone)) return { ok: false };
+  return cancelBooking({ appointment_id: input.appointment_id });
+}
 
 export async function cancelBooking(input: z.infer<typeof cancelInput>) {
   const s = await db();
@@ -68,14 +78,17 @@ export async function cancelBooking(input: z.infer<typeof cancelInput>) {
   return { ok: Boolean(data) };
 }
 
-export async function findAppointmentsByPhone(phone: string) {
+export async function findAppointmentsVerified(phone: string, name: string) {
   const s = await db();
   const { data } = await s
     .from("appointments")
-    .select("id, patient_name, status, schedule_slots(slot_date, slot_time), doctors(full_name)")
-    .eq("phone", phone)
+    .select("id, patient_name, phone, schedule_slots(slot_date, slot_time), doctors(full_name)")
     .eq("status", "confirmed");
-  return data ?? [];
+  const n = name.trim().toLowerCase();
+  const p = normPhone(phone);
+  return (data ?? [])
+    .filter((a) => normPhone(a.phone) === p && p.length >= 5 && a.patient_name.toLowerCase().includes(n) && n.length >= 2)
+    .map(({ id, schedule_slots, doctors }) => ({ id, schedule_slots, doctors }));
 }
 
 export async function logCall(row: { id: string; language: string; transcript: unknown; entities: unknown; summary: string }) {

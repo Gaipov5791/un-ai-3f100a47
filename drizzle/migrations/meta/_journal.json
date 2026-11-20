@@ -15,6 +15,13 @@
       "when": 1795172374540,
       "tag": "0001_restrict_slots_read",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795172614894,
+      "tag": "0002_staff_roles",
+      "breakpoints": true
     }
   ]
 }

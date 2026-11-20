@@ -33,3 +33,5 @@ use the editor.
 - Booking logic lives in `src/lib/clinic.server.ts`; all writes go through the `book_slot` / `cancel_appointment` DB functions (atomic, overbooking-safe) — never update slots directly from app code.
 - Voice-assistant function-calling endpoints are TanStack server routes under `src/routes/api/public/` (check-availability, create-booking, cancel-booking, assistant), not Supabase Edge Functions — the stack forbids new Edge Functions.
 - Appointments/call_logs have no anon RLS access (patient PII); the reception console reads them via server functions, and realtime listens to `schedule_slots` only.
+- Reception console lives under `src/routes/_authenticated/`; its server functions require sign-in AND the `staff` role (`has_role`). The first registered account is auto-granted staff by a DB trigger; grant others by inserting into `user_roles`.
+- Public assistant/API lookups and cancellations must verify the caller-supplied phone (and name for lookups) against the appointment before revealing or changing it.
