@@ -97,7 +97,7 @@ function Reception() {
     );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-5 md:px-8">
+    <div className="mx-auto flex max-w-7xl flex-col px-4 py-5 md:h-dvh md:overflow-hidden md:px-6 md:py-4">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:justify-between">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button asChild variant="ghost" size="icon"><Link to="/" aria-label="Назад"><ArrowLeft /></Link></Button>
@@ -110,8 +110,8 @@ function Reception() {
         <Button variant="ghost" size="sm" onClick={signOut} aria-label="Выйти"><LogOut /> <span className="hidden sm:inline">Выйти</span></Button></div>
       </header>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr_360px]">
-        <aside className="rounded-3xl border border-border bg-panel p-4">
+      <div className="mt-4 grid gap-4 md:min-h-0 md:flex-1 md:grid-cols-[220px_1fr] lg:grid-cols-[240px_1fr_320px]">
+        <aside className="overflow-y-auto rounded-3xl border border-border bg-panel p-4 md:min-h-0">
           <h2 className="mb-3 font-display text-sm text-muted-foreground">Врачи</h2>
           <div className="space-y-2">
             {doctors.data?.map((d) => (
@@ -127,13 +127,13 @@ function Reception() {
           </div>
         </aside>
 
-        <section className="rounded-3xl border border-border bg-panel p-4">
+        <section className="overflow-y-auto rounded-3xl border border-border bg-panel p-4 md:min-h-0">
           <div className="flex gap-2 overflow-x-auto pb-2">
             {days.map((d) => (
               <button key={d} onClick={() => setDay(d)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-xs capitalize", day === d ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground")}>{fmtDay(d)}</button>
             ))}
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {slots.data?.map((s) => (
               <button key={s.id} disabled={s.status === "booked"} onClick={() => setBooking({ id: s.id, time: s.slot_time.slice(0, 5) })}
                 className={cn("rounded-2xl border p-4 text-center transition", s.status === "available" ? "border-primary/40 hover:bg-primary hover:text-primary-foreground" : "border-accent/40 bg-accent/10 text-accent")}>
@@ -145,9 +145,9 @@ function Reception() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border bg-panel p-4">
+        <section className="flex flex-col rounded-3xl border border-border bg-panel p-4 md:col-span-2 md:min-h-0 lg:col-span-1">
           <h2 className="mb-3 font-display text-sm text-muted-foreground">Журнал записей ({confirmed.length})</h2>
-          <div className="max-h-[70vh] space-y-2 overflow-y-auto">
+          <div className="max-h-[70vh] space-y-2 overflow-y-auto md:max-h-none md:min-h-0 md:flex-1">
             {confirmed.map((a) => (
               <div key={a.id} className="rounded-2xl border border-border p-3 text-sm">
                 <div className="flex items-start justify-between gap-2">

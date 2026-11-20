@@ -148,7 +148,7 @@ function Cockpit() {
   const modeLabel = { idle: L.idle, listening: L.listening, thinking: L.thinking, speaking: L.speaking }[mode];
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-3 py-4 sm:px-4 sm:py-5 md:px-8">
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-3 py-4 sm:px-4 sm:py-5 md:h-dvh md:min-h-0 md:overflow-hidden md:px-6 md:py-4">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
         <div className="min-w-0">
           <div className="font-display text-xl font-bold tracking-tight text-primary sm:text-2xl">un-ai</div>
@@ -170,21 +170,21 @@ function Cockpit() {
         </div>
       </header>
 
-      <main className="mt-4 grid flex-1 gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <section className="relative flex flex-col items-center justify-center rounded-3xl border border-border bg-panel p-4 shadow-glow sm:p-6">
-          <div className="aspect-square w-full max-w-[460px]"><AcousticSphere level={level} mode={mode} /></div>
-          <p className="mt-2 font-display text-sm tracking-wide text-muted-foreground">{modeLabel}</p>
+      <main className="mt-4 grid flex-1 gap-4 sm:gap-6 md:min-h-0 md:grid-cols-[1fr_1fr] md:gap-4 lg:grid-cols-[1.1fr_1fr]">
+        <section className="relative flex min-h-0 flex-col items-center justify-center rounded-3xl border border-border bg-panel p-4 shadow-glow sm:p-6 md:p-4">
+          <div className="aspect-square w-full max-w-[460px] md:min-h-0 md:w-auto md:max-w-full md:flex-1"><AcousticSphere level={level} mode={mode} /></div>
+          <p className="mt-2 shrink-0 font-display text-sm tracking-wide text-muted-foreground">{modeLabel}</p>
           <button onClick={toggleMic} aria-label="Микрофон"
-            className={cn("mt-5 flex h-16 w-16 items-center sm:h-20 sm:w-20 justify-center rounded-full transition", mode === "listening" ? "bg-accent text-accent-foreground animate-pulse" : "bg-primary text-primary-foreground hover:scale-105")}>
+            className={cn("mt-3 flex h-16 w-16 shrink-0 items-center sm:h-20 sm:w-20 justify-center rounded-full transition", mode === "listening" ? "bg-accent text-accent-foreground animate-pulse" : "bg-primary text-primary-foreground hover:scale-105")}>
             {mode === "listening" ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
           </button>
-          <div className="mt-6 grid w-full max-w-sm grid-cols-2 gap-3 text-center">
+          <div className="mt-4 grid w-full max-w-sm shrink-0 grid-cols-2 gap-3 text-center">
             <div className="rounded-2xl border border-border p-3"><div className="font-display text-2xl text-primary">{stats.data?.free ?? "–"}</div><div className="text-xs text-muted-foreground">{L.today}: {L.free}</div></div>
             <div className="rounded-2xl border border-border p-3"><div className="font-display text-2xl text-accent">{stats.data?.booked ?? "–"}</div><div className="text-xs text-muted-foreground">{L.today}: {L.booked}</div></div>
           </div>
         </section>
 
-        <section className="flex min-h-[480px] sm:min-h-[560px] flex-col rounded-3xl border border-border bg-panel">
+        <section className="flex min-h-[480px] flex-col rounded-3xl sm:min-h-[560px] md:min-h-0 border border-border bg-panel">
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <span className="font-display text-sm">Chat</span>
             <Button size="sm" variant="ghost" onClick={() => send(L.demoLine)} disabled={mode === "thinking"}><Sparkles /> {L.demo}</Button>
