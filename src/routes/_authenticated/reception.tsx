@@ -98,16 +98,16 @@ function Reception() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-5 md:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:justify-between">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button asChild variant="ghost" size="icon"><Link to="/" aria-label="Назад"><ArrowLeft /></Link></Button>
           <div>
-            <h1 className="font-display text-xl font-bold">Пульт Smart Reception</h1>
+            <h1 className="truncate font-display text-base font-bold sm:text-xl">Пульт Smart Reception</h1>
             <p className="text-xs text-muted-foreground">Клиника «Ак-Жол» · un-ai</p>
           </div>
         </div>
-        <Badge variant="outline" className={cn("gap-1.5", live && "border-primary text-primary")}><Radio className="h-3 w-3" />{live ? "Онлайн" : "Подключение…"}</Badge>
-        <Button variant="ghost" size="sm" onClick={signOut}><LogOut /> Выйти</Button>
+        <div className="flex shrink-0 items-center gap-1"><Badge variant="outline" className={cn("gap-1.5", live && "border-primary text-primary")}><Radio className="h-3 w-3" /><span className="hidden sm:inline">{live ? "Онлайн" : "Подключение…"}</span></Badge>
+        <Button variant="ghost" size="sm" onClick={signOut} aria-label="Выйти"><LogOut /> <span className="hidden sm:inline">Выйти</span></Button></div>
       </header>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr_360px]">

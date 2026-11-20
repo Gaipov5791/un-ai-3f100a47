@@ -148,34 +148,34 @@ function Cockpit() {
   const modeLabel = { idle: L.idle, listening: L.listening, thinking: L.thinking, speaking: L.speaking }[mode];
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-5 md:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div className="font-display text-2xl font-bold tracking-tight text-primary">un-ai</div>
-          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Клиника «Ак-Жол» · {L.tagline}</div>
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-3 py-4 sm:px-4 sm:py-5 md:px-8">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
+        <div className="min-w-0">
+          <div className="font-display text-xl font-bold tracking-tight text-primary sm:text-2xl">un-ai</div>
+          <div className="truncate text-[10px] uppercase tracking-[0.15em] text-muted-foreground sm:text-xs sm:tracking-[0.2em]">Клиника «Ак-Жол» · {L.tagline}</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <div className="flex rounded-full border border-border bg-panel p-1">
             {(["ru", "ky"] as const).map((l) => (
               <button key={l} onClick={() => setLang(l)}
-                className={cn("rounded-full px-4 py-1.5 text-sm font-semibold transition", lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+                className={cn("rounded-full px-3 py-1 text-xs font-semibold sm:px-4 sm:py-1.5 sm:text-sm transition", lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
                 {l === "ru" ? "RU" : "KY"}
               </button>
             ))}
           </div>
-          <Button variant="outline" size="icon" onClick={() => { setVoiceOn((v) => !v); speechSynthesis?.cancel(); }} aria-label="Голос ассистента">
+          <Button variant="outline" size="icon" className="h-8 w-8 sm:h-9 sm:w-9" onClick={() => { setVoiceOn((v) => !v); speechSynthesis?.cancel(); }} aria-label="Голос ассистента">
             {voiceOn ? <Volume2 /> : <VolumeX />}
           </Button>
-          <Button asChild variant="secondary"><Link to="/reception"><LayoutDashboard /> {L.reception}</Link></Button>
+          <Button asChild variant="secondary" size="sm" className="px-2.5 sm:px-3"><Link to="/reception" aria-label={L.reception}><LayoutDashboard /> <span className="hidden sm:inline">{L.reception}</span></Link></Button>
         </div>
       </header>
 
-      <main className="mt-6 grid flex-1 gap-6 lg:grid-cols-[1.1fr_1fr]">
-        <section className="relative flex flex-col items-center justify-center rounded-3xl border border-border bg-panel p-6 shadow-glow">
+      <main className="mt-4 grid flex-1 gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-[1.1fr_1fr]">
+        <section className="relative flex flex-col items-center justify-center rounded-3xl border border-border bg-panel p-4 shadow-glow sm:p-6">
           <div className="aspect-square w-full max-w-[460px]"><AcousticSphere level={level} mode={mode} /></div>
           <p className="mt-2 font-display text-sm tracking-wide text-muted-foreground">{modeLabel}</p>
           <button onClick={toggleMic} aria-label="Микрофон"
-            className={cn("mt-5 flex h-20 w-20 items-center justify-center rounded-full transition", mode === "listening" ? "bg-accent text-accent-foreground animate-pulse" : "bg-primary text-primary-foreground hover:scale-105")}>
+            className={cn("mt-5 flex h-16 w-16 items-center sm:h-20 sm:w-20 justify-center rounded-full transition", mode === "listening" ? "bg-accent text-accent-foreground animate-pulse" : "bg-primary text-primary-foreground hover:scale-105")}>
             {mode === "listening" ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
           </button>
           <div className="mt-6 grid w-full max-w-sm grid-cols-2 gap-3 text-center">
@@ -184,7 +184,7 @@ function Cockpit() {
           </div>
         </section>
 
-        <section className="flex min-h-[560px] flex-col rounded-3xl border border-border bg-panel">
+        <section className="flex min-h-[480px] sm:min-h-[560px] flex-col rounded-3xl border border-border bg-panel">
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <span className="font-display text-sm">Chat</span>
             <Button size="sm" variant="ghost" onClick={() => send(L.demoLine)} disabled={mode === "thinking"}><Sparkles /> {L.demo}</Button>
