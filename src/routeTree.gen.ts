@@ -10,33 +10,103 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReceptionRouteImport } from './routes/reception'
+import { Route as ApiPublicAssistantRouteImport } from './routes/api/public/assistant'
+import { Route as ApiPublicCancelBookingRouteImport } from './routes/api/public/cancel-booking'
+import { Route as ApiPublicCheckAvailabilityRouteImport } from './routes/api/public/check-availability'
+import { Route as ApiPublicCreateBookingRouteImport } from './routes/api/public/create-booking'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReceptionRoute = ReceptionRouteImport.update({
+  id: '/reception',
+  path: '/reception',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAssistantRoute = ApiPublicAssistantRouteImport.update({
+  id: '/api/public/assistant',
+  path: '/api/public/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCancelBookingRoute = ApiPublicCancelBookingRouteImport.update({
+  id: '/api/public/cancel-booking',
+  path: '/api/public/cancel-booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicCheckAvailabilityRoute =
+  ApiPublicCheckAvailabilityRouteImport.update({
+    id: '/api/public/check-availability',
+    path: '/api/public/check-availability',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicCreateBookingRoute = ApiPublicCreateBookingRouteImport.update({
+  id: '/api/public/create-booking',
+  path: '/api/public/create-booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/reception': typeof ReceptionRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
+  '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
+  '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
+  '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/reception': typeof ReceptionRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
+  '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
+  '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
+  '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/reception': typeof ReceptionRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
+  '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
+  '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
+  '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/reception'
+    | '/api/public/assistant'
+    | '/api/public/cancel-booking'
+    | '/api/public/check-availability'
+    | '/api/public/create-booking'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/reception'
+    | '/api/public/assistant'
+    | '/api/public/cancel-booking'
+    | '/api/public/check-availability'
+    | '/api/public/create-booking'
+  id:
+    | '__root__'
+    | '/'
+    | '/reception'
+    | '/api/public/assistant'
+    | '/api/public/cancel-booking'
+    | '/api/public/check-availability'
+    | '/api/public/create-booking'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ReceptionRoute: typeof ReceptionRoute
+  ApiPublicAssistantRoute: typeof ApiPublicAssistantRoute
+  ApiPublicCancelBookingRoute: typeof ApiPublicCancelBookingRoute
+  ApiPublicCheckAvailabilityRoute: typeof ApiPublicCheckAvailabilityRoute
+  ApiPublicCreateBookingRoute: typeof ApiPublicCreateBookingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +118,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reception': {
+      id: '/reception'
+      path: '/reception'
+      fullPath: '/reception'
+      preLoaderRoute: typeof ReceptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/assistant': {
+      id: '/api/public/assistant'
+      path: '/api/public/assistant'
+      fullPath: '/api/public/assistant'
+      preLoaderRoute: typeof ApiPublicAssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cancel-booking': {
+      id: '/api/public/cancel-booking'
+      path: '/api/public/cancel-booking'
+      fullPath: '/api/public/cancel-booking'
+      preLoaderRoute: typeof ApiPublicCancelBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/check-availability': {
+      id: '/api/public/check-availability'
+      path: '/api/public/check-availability'
+      fullPath: '/api/public/check-availability'
+      preLoaderRoute: typeof ApiPublicCheckAvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/create-booking': {
+      id: '/api/public/create-booking'
+      path: '/api/public/create-booking'
+      fullPath: '/api/public/create-booking'
+      preLoaderRoute: typeof ApiPublicCreateBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ReceptionRoute: ReceptionRoute,
+  ApiPublicAssistantRoute: ApiPublicAssistantRoute,
+  ApiPublicCancelBookingRoute: ApiPublicCancelBookingRoute,
+  ApiPublicCheckAvailabilityRoute: ApiPublicCheckAvailabilityRoute,
+  ApiPublicCreateBookingRoute: ApiPublicCreateBookingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

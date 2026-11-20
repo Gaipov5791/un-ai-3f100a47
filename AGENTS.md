@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## un-ai architecture
+- Booking logic lives in `src/lib/clinic.server.ts`; all writes go through the `book_slot` / `cancel_appointment` DB functions (atomic, overbooking-safe) — never update slots directly from app code.
+- Voice-assistant function-calling endpoints are TanStack server routes under `src/routes/api/public/` (check-availability, create-booking, cancel-booking, assistant), not Supabase Edge Functions — the stack forbids new Edge Functions.
+- Appointments/call_logs have no anon RLS access (patient PII); the reception console reads them via server functions, and realtime listens to `schedule_slots` only.
