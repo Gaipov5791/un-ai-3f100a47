@@ -14,9 +14,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "un-ai — Neo-Audio Cockpit клиники «Ак-Жол»" },
-      { name: "description", content: "Говорите с ассистентом на русском или кыргызском: подбор врача, проверка слотов и запись на приём." },
+      { name: "description", content: "Говорите с ассистентом на казахском или русском: подбор врача, проверка слотов и запись на приём." },
       { property: "og:title", content: "un-ai — Neo-Audio Cockpit" },
-      { property: "og:description", content: "Голосовая запись к врачу клиники «Ак-Жол» на русском и кыргызском." },
+      { property: "og:description", content: "Голосовая запись к врачу клиники «Ак-Жол» на казахском и русском." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -28,7 +28,7 @@ type Msg = { role: "user" | "assistant"; content: string };
 type Mode = "idle" | "listening" | "thinking" | "speaking";
 
 function Cockpit() {
-  const [lang, setLang] = useState<Lang>("ru");
+  const [lang, setLang] = useState<Lang>("kk");
   const L = t[lang];
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -73,7 +73,7 @@ function Cockpit() {
     if (!voiceOn || typeof speechSynthesis === "undefined") { setMode("idle"); return; }
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === "ky" ? "ky-KG" : "ru-RU";
+    u.lang = lang === "kk" ? "kk-KZ" : "ru-RU";
     const voice = speechSynthesis.getVoices().find((v) => v.lang.startsWith(lang)) ?? speechSynthesis.getVoices().find((v) => v.lang.startsWith("ru"));
     if (voice) u.voice = voice;
     u.onend = () => setMode("idle");
@@ -98,7 +98,7 @@ function Cockpit() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Ошибка");
       setMessages((m) => [...m, { role: "assistant", content: data.reply }]);
-      if (data.actions?.some((a: any) => a.type === "booking" && a.data?.ok)) toast.success(lang === "ky" ? "Жазылуу ырасталды" : "Запись подтверждена");
+      if (data.actions?.some((a: any) => a.type === "booking" && a.data?.ok)) toast.success(lang === "kk" ? "Жазылу расталды" : "Запись подтверждена");
       speak(data.reply);
     } catch (e) {
       toast.error((e as Error).message);
@@ -112,11 +112,18 @@ function Cockpit() {
     if (!SR) { toast.error(L.noMic); return; }
     speechSynthesis?.cancel();
     const rec = new SR();
-    rec.lang = lang === "ky" ? "ky-KG" : "ru-RU";
+    rec.lang = lang === "kk" ? "kk-KZ" : "ru-RU";
     rec.interimResults = true;
     let finalText = "";
     let stream: MediaStream | null = null;
-    try {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
+    if (typeof speechSynthesis !== "undefined") { const w = new SpeechSynthesisUtterance(" "); w.volume = 0; speechSynthesis.speak(w); }
+    if (isMobile) {
+      let raf = 0; const t0 = performance.now();
+      const tick = () => { setLevel(0.35 + 0.25 * Math.sin((performance.now() - t0) / 180)); raf = requestAnimationFrame(tick); };
+      tick();
+      audioRef.current = { stop: () => { cancelAnimationFrame(raf); setLevel(0); } };
+    } else try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const ac = new AudioContext();
       const an = ac.createAnalyser();
@@ -139,10 +146,16 @@ function Cockpit() {
       setMode("idle");
       if (finalText) send(finalText);
     };
-    rec.onerror = () => { audioRef.current?.stop(); setMode("idle"); };
+    rec.onerror = (e: any) => {
+      audioRef.current?.stop(); setMode("idle");
+      const err = e?.error;
+      if (err === "not-allowed" || err === "service-not-allowed") toast.error(lang === "kk" ? "Микрофонға рұқсат беріңіз (браузер баптаулары)." : "Разрешите доступ к микрофону в настройках браузера.");
+      else if (err === "no-speech") toast.error(lang === "kk" ? "Дауыс естілмеді, қайталап көріңіз." : "Речь не распознана, попробуйте ещё раз.");
+      else if (err && err !== "aborted") toast.error(lang === "kk" ? "Микрофон қатесі. Chrome немесе Safari браузерін ашыңыз." : "Ошибка микрофона. Откройте сайт в Chrome или Safari.");
+    };
     recRef.current = rec;
     setMode("listening");
-    rec.start();
+    try { rec.start(); } catch { audioRef.current?.stop(); setMode("idle"); toast.error(L.noMic); }
   }
 
   const modeLabel = { idle: L.idle, listening: L.listening, thinking: L.thinking, speaking: L.speaking }[mode];
@@ -156,10 +169,10 @@ function Cockpit() {
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <div className="flex rounded-full border border-border bg-panel p-1">
-            {(["ru", "ky"] as const).map((l) => (
+            {(["kk", "ru"] as const).map((l) => (
               <button key={l} onClick={() => setLang(l)}
                 className={cn("rounded-full px-3 py-1 text-xs font-semibold sm:px-4 sm:py-1.5 sm:text-sm transition", lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
-                {l === "ru" ? "RU" : "KY"}
+                {l === "ru" ? "RU" : "KZ"}
               </button>
             ))}
           </div>

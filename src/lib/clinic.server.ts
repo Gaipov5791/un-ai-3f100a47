@@ -39,7 +39,7 @@ export const bookingInput = z.object({
   patient_name: z.string().trim().min(2).max(120),
   phone: z.string().trim().min(5).max(30),
   symptoms: z.string().max(1000).optional(),
-  language: z.enum(["ru", "ky"]).optional(),
+  language: z.enum(["kk", "ru"]).optional(),
 });
 
 export async function createBooking(input: z.infer<typeof bookingInput>) {
