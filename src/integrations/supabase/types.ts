@@ -154,6 +154,60 @@ export type Database = {
           },
         ]
       }
+      tts_settings: {
+        Row: {
+          enabled: boolean
+          global_monthly_chars: number
+          id: boolean
+          per_user_daily_chars: number
+          per_user_monthly_chars: number
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          global_monthly_chars?: number
+          id?: boolean
+          per_user_daily_chars?: number
+          per_user_monthly_chars?: number
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          global_monthly_chars?: number
+          id?: boolean
+          per_user_daily_chars?: number
+          per_user_monthly_chars?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tts_usage: {
+        Row: {
+          cached: boolean
+          chars: number
+          created_at: string
+          id: string
+          session_id: string
+          voice: string
+        }
+        Insert: {
+          cached?: boolean
+          chars: number
+          created_at?: string
+          id?: string
+          session_id: string
+          voice: string
+        }
+        Update: {
+          cached?: boolean
+          chars?: number
+          created_at?: string
+          id?: string
+          session_id?: string
+          voice?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -188,12 +242,32 @@ export type Database = {
         Returns: string
       }
       cancel_appointment: { Args: { _appt_id: string }; Returns: boolean }
+      get_tts_admin_stats: { Args: never; Returns: Json }
+      get_tts_quota: { Args: { _session_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      prepare_tts: {
+        Args: {
+          _cached: boolean
+          _chars: number
+          _session_id: string
+          _voice: string
+        }
+        Returns: Json
+      }
+      update_tts_settings: {
+        Args: {
+          _daily: number
+          _enabled: boolean
+          _global: number
+          _monthly: number
+        }
+        Returns: undefined
       }
     }
     Enums: {

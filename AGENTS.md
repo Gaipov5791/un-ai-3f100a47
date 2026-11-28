@@ -35,3 +35,4 @@ use the editor.
 - Appointments/call_logs have no anon RLS access (patient PII); the reception console reads them via server functions, and realtime listens to `schedule_slots` only.
 - Reception console lives under `src/routes/_authenticated/`; its server functions require sign-in AND the `staff` role (`has_role`). The first registered account is auto-granted staff by a DB trigger; grant others by inserting into `user_roles`.
 - Public assistant/API lookups and cancellations must verify the caller-supplied phone (and name for lookups) against the appointment before revealing or changing it.
+- Azure Speech synthesis is server-only in `src/routes/api/public/tts.ts`, with atomic database quotas and private MP3 caching; browser playback uses `src/lib/tts.ts` and must never expose Azure secrets or fall back to `speechSynthesis`.

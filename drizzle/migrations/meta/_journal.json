@@ -22,6 +22,13 @@
       "when": 1795172614894,
       "tag": "0002_staff_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795869445712,
+      "tag": "0003_add_azure_tts_usage_limits",
+      "breakpoints": true
     }
   ]
 }

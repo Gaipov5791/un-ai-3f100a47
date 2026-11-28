@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, LogOut, Radio, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, LogOut, Radio, Volume2, X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { VoiceUsagePanel } from "@/components/reception/VoiceUsagePanel";
 
 export const Route = createFileRoute("/_authenticated/reception")({
   head: () => ({
@@ -43,6 +44,7 @@ function Reception() {
   const [booking, setBooking] = useState<{ id: string; time: string } | null>(null);
   const [form, setForm] = useState({ patient_name: "", phone: "", symptoms: "" });
   const [live, setLive] = useState(false);
+  const [view, setView] = useState<"schedule" | "voice">("schedule");
 
   const doctors = useQuery({
     queryKey: ["doctors"],
@@ -110,6 +112,14 @@ function Reception() {
         <Button variant="ghost" size="sm" onClick={signOut} aria-label="Выйти"><LogOut /> <span className="hidden sm:inline">Выйти</span></Button></div>
       </header>
 
+      <div className="mt-4 flex gap-2" role="tablist" aria-label="Разделы пульта">
+        <button role="tab" aria-selected={view === "schedule"} onClick={() => setView("schedule")} className={cn("flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition", view === "schedule" ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground")}><CalendarDays className="h-4 w-4" /> Расписание</button>
+        <button role="tab" aria-selected={view === "voice"} onClick={() => setView("voice")} className={cn("flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition", view === "voice" ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground")}><Volume2 className="h-4 w-4" /> Расход голоса</button>
+      </div>
+
+      {view === "voice" ? (
+        <div className="mt-4 min-h-0 flex-1 overflow-y-auto pb-4"><VoiceUsagePanel /></div>
+      ) : (
       <div className="mt-4 grid gap-4 md:min-h-0 md:flex-1 md:grid-cols-[220px_1fr] lg:grid-cols-[240px_1fr_320px]">
         <aside className="overflow-y-auto rounded-3xl border border-border bg-panel p-4 md:min-h-0">
           <h2 className="mb-3 font-display text-sm text-muted-foreground">Врачи</h2>
@@ -165,6 +175,7 @@ function Reception() {
           </div>
         </section>
       </div>
+      )}
 
       <Dialog open={!!booking} onOpenChange={(o) => !o && setBooking(null)}>
         <DialogContent>

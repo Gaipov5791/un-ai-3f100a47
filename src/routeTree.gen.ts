@@ -17,6 +17,7 @@ import { Route as ApiPublicAssistantRouteImport } from './routes/api/public/assi
 import { Route as ApiPublicCancelBookingRouteImport } from './routes/api/public/cancel-booking'
 import { Route as ApiPublicCheckAvailabilityRouteImport } from './routes/api/public/check-availability'
 import { Route as ApiPublicCreateBookingRouteImport } from './routes/api/public/create-booking'
+import { Route as ApiPublicTtsRouteImport } from './routes/api/public/tts'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const ApiPublicCreateBookingRoute = ApiPublicCreateBookingRouteImport.update({
   path: '/api/public/create-booking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTtsRoute = ApiPublicTtsRouteImport.update({
+  id: '/api/public/tts',
+  path: '/api/public/tts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
   '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
+  '/api/public/tts': typeof ApiPublicTtsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
   '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
+  '/api/public/tts': typeof ApiPublicTtsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/api/public/cancel-booking': typeof ApiPublicCancelBookingRoute
   '/api/public/check-availability': typeof ApiPublicCheckAvailabilityRoute
   '/api/public/create-booking': typeof ApiPublicCreateBookingRoute
+  '/api/public/tts': typeof ApiPublicTtsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/api/public/cancel-booking'
     | '/api/public/check-availability'
     | '/api/public/create-booking'
+    | '/api/public/tts'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/api/public/cancel-booking'
     | '/api/public/check-availability'
     | '/api/public/create-booking'
+    | '/api/public/tts'
   id:
     | '__root__'
     | '/'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/api/public/cancel-booking'
     | '/api/public/check-availability'
     | '/api/public/create-booking'
+    | '/api/public/tts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   ApiPublicCancelBookingRoute: typeof ApiPublicCancelBookingRoute
   ApiPublicCheckAvailabilityRoute: typeof ApiPublicCheckAvailabilityRoute
   ApiPublicCreateBookingRoute: typeof ApiPublicCreateBookingRoute
+  ApiPublicTtsRoute: typeof ApiPublicTtsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCreateBookingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/tts': {
+      id: '/api/public/tts'
+      path: '/api/public/tts'
+      fullPath: '/api/public/tts'
+      preLoaderRoute: typeof ApiPublicTtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -209,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCancelBookingRoute: ApiPublicCancelBookingRoute,
   ApiPublicCheckAvailabilityRoute: ApiPublicCheckAvailabilityRoute,
   ApiPublicCreateBookingRoute: ApiPublicCreateBookingRoute,
+  ApiPublicTtsRoute: ApiPublicTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
